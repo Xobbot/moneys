@@ -1,0 +1,79 @@
+# сторонние библиотеки
+import telebot
+# Мои библиотеки
+from Config import TOKEN, Money
+from extensions import URLS , ValueLenError , ValueOneError
+
+
+bot = telebot.TeleBot(TOKEN)
+
+
+#  команда приветствие
+@bot.message_handler(commands=['Hello','hello'])
+def function_name(message):
+    bot.reply_to(message, "Hello Пипл")
+
+# описание функционала
+@bot.message_handler(commands=['Help','help'])
+def function_name(message):
+    helper_Text = 'Пропиши запрос в виде:\n <Валюта1> ' \
+                  '<Валюта2>' \
+                  '<штук едениц> \n список валют /value'
+    bot.reply_to(message, helper_Text)
+
+# перебор и вывод валюты
+@bot.message_handler(commands=['Что','что','value'])
+def function_name(message):
+    string = 'Доступные валюты: '
+    for money in Money.keys():
+        string = string + '\n ' + money
+    string1 = 'значения: '
+
+    bot.reply_to(message, string+ '\n \n' +string1)
+# вкусняшки работа с текстом
+@bot.message_handler(content_types=['text',])
+def convert(message: telebot.types.Message):
+    # Рубль Доллар 1
+    # берем меседж из этого текста через пробелы забираем значения
+    What, What1, how = message.text.split(' ')
+    #What=руб What1 =дол how=1
+    #query = 'What=' + What + ' What1 =' + What1 + ' how=' + how
+
+    x = What
+    y = What1
+    z = how
+    Itogo=''
+    #Проверка на исключения
+    try:
+        Flag1 = 'Первая валюта Fail ' + x
+        Flag2 = 'Вторая валюта Fail ' + y
+        for money in Money.keys():
+            if x == money:
+                Flag1 = ''
+        if Flag1 != '':
+            raise ValueOneError
+        for money in Money.keys():
+            if y == money:
+                Flag2 = ''
+        if Flag2 != '':
+            raise ValueOneError
+
+    except ValueOneError:
+        Itogo = 'Не корректно указали валюту ' + Flag1 + ', '+ Flag2
+    try:
+        Vales = int(z)
+    except ValueError:
+        Itogo = Itogo +' Не цифра'
+    if len(Itogo)>5:
+         bot.reply_to(message, Itogo)
+    else:
+        # 10-EUR-RUB
+        ListSTran = URLS()  # класс для запроса
+        itogo = ListSTran.WEBS(x,y,z)
+        # для проверки 
+        #moneysiteRub_BRub = 'https://finance.rambler.ru/calculators/converter/' + z + '-' + x + '-' + y + '/'
+
+        bot.reply_to(message, itogo )
+
+bot.polling(none_stop=True)
+exit()

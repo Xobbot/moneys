@@ -1,0 +1,25 @@
+from bs4 import BeautifulSoup as BS
+import  requests
+
+class APIException(Exception):  # создаём пустой класс – исключения
+    pass
+class ValueOneError(APIException):# класс не правильной валюты
+    pass
+class ValueLenError(APIException):# класс не правильной валюты
+    pass
+
+class URLS:
+    def WEBS(self, x, y, z=1, rezus=''):
+
+        moneysiteRub_BRub = 'https://finance.rambler.ru/calculators/converter/' + z + '-' + x + '-' + y + '/'
+
+        r = requests.get(moneysiteRub_BRub)
+        soup = BS(r.text, 'lxml')
+        curs = soup.findAll("div", {"class": "converter-display__cross-block"})
+        # перевод TAG в массив
+        for li in curs:
+            mass = li.text.split('\n')
+        masiv = [mass[2], mass[1], mass[5], mass[4]]
+        itogo = mass[5] +' = ' +mass[4]
+
+        return itogo

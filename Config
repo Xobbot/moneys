@@ -1,0 +1,6 @@
+Money = {
+    'RUB':'Рубли',
+    'EUR':'Евро',
+    'USD': 'Долар',
+}
+TOKEN = "6003215337:AAECJEBS02CYiAn2upmTxNUbAAK-7OHQhBU"
